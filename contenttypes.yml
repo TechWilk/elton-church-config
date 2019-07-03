@@ -1,0 +1,538 @@
+# This file defines the contenttypes on the website. See the documentation for
+# details: https://docs.bolt.cm/manual/contenttypes
+
+# Pages can be used for the more 'static' pages on your site. Things like
+# 'about us', 'contact' or a 'disclaimer'. This content-type has a 'templateselect'
+# field, which allows you to override the record_template setting for an
+# individual page.
+# The taxonomy for this contenttype is defined as 'groups', which is a so-called
+# "grouping taxonomy". This way you can easily group sets of pages that logically
+# belong together. If your site has a 'services' section, in which you'd like to
+# list the different types of services a company provides, you can group these
+# together.
+
+pages:
+    name: Pages
+    singular_name: Page
+    fields:
+        title:
+            type: text
+            class: large
+            group: content
+        image:
+            type: image
+        teaser:
+            type: textarea
+            height: 55px
+            pattern: "^.{1,160}$"
+            postfix: "<p><em>Maximum 160 characters</em></p>"
+        body:
+            type: html
+            height: 300px
+        slug:
+            type: slug
+            uses: title
+        template:
+            type: templateselect
+            filter: '*.twig'
+    taxonomy: [ groups ]
+    default_status: publish
+    recordsperpage: 100
+
+
+services:
+    name: Services
+    singular_name: Service
+    fields:
+        service_name:
+            type: text
+            class: large
+        time:
+            type: text
+            postfix: "<p><em>Please enter in the format: <strong>10:00 AM</strong></em></p>"
+        day:
+            type: select
+            values: [ Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday ]
+            multiple: false
+        weeks:
+            label: "Week(s) of the month"
+            type: select
+            values:
+                Every: "Every week"
+                1st: "1st"
+                2nd: "2nd"
+                3rd: "3rd"
+                4th: "4th"
+                5th: "5th"
+                'Every other': "Alternate weeks"
+            multiple: true
+        teaser:
+            type: textarea
+            height: 55px
+            pattern: "^.{1,160}$"
+            postfix: "<p><em>A very brief (single sentance) descrition of the service</em></p>"
+        description:
+            type: html
+            height: 300px
+        display:
+            type: checkbox
+            label: "Homepage"
+            postfix: "<p><em>Select to display this service on the homepage.</em></p>"
+        image:
+            type: image
+            group: media
+        slug:
+            type: slug
+            uses: service_name
+    relations:
+        buildings:
+          multiple: true
+          order: title
+          label: Select a building
+          required: true
+          group: content
+    taxonomy: [ service_types ]
+    record_template: entry.twig
+    listing_template: listing.twig
+    listing_records: 10
+    default_status: publish
+    sort: weeks, day
+    recordsperpage: 10
+    icon_many: "fa:users"
+    icon_one: "fa:users"
+
+
+buildings:
+    name: Buildings
+    singular_name: Building
+    fields:
+        name:
+            type: text
+            class: large
+            group: content
+            required: true
+        about:
+            type: html
+            height: 300px
+        facilities:
+            type: html
+            height: 300px
+        address:
+            type: textarea
+            height: 150px
+            required: true
+            postfix: "<p><em>Address for directions. Include postcode for sat-nav users.</em></p>"
+        location:
+            type: geolocation
+        image:
+            type: image
+            group: media
+        gallery:
+            type: imagelist
+            extensions: [ gif, jpg, png ]
+        slug:
+            type: slug
+            uses: name
+    record_template: building.twig
+    listing_template: buildings.twig
+    listing_records: 10
+    default_status: publish
+    show_on_dashboard: false
+    recordsperpage: 10
+    icon_many: "fa:map-o"
+    icon_one: "fa:map-marker"
+
+
+people:
+    name: People
+    singular_name: Person
+    fields:
+        firstname:
+            type: text
+            label: "First name"
+            class: large
+            group: content
+            required: true
+        lastname:
+            type: text
+            label: "Last name"
+            class: large
+            group: content
+            required: true
+        titles:
+            type: text
+            group: content
+        about:
+            type: html
+            height: 300px
+        role:
+            type: text
+            group: content
+            required: true
+            postfix: "Required"
+        role_explanation:
+            type: textarea
+            height: 200px
+        email:
+            type: text
+            pattern: email
+            postfix: "<div><p>The email address will <strong>not</strong> be visible on the website.</p><p>In the future, it will be used to add this person to the drop-down email selector on the 'contact' page. Leave blank to prevent this person being emailed.</p></div>"
+        display:
+            type: checkbox
+            default: true
+            label: "Display"
+            postfix: "<p><em>Select to display this user on the website. (Users with an email address will still be included in the email form on 'contact' page, regardless of this setting)</em></p>"
+        image:
+            type: image
+            group: media
+        slug:
+            type: slug
+            uses: [firstname,lastname]
+    record_template: person.twig
+    listing_template: people.twig
+    listing_records: 10
+    default_status: publish
+    show_on_dashboard: false
+    sort: -datepublish
+    format: '{{item.firstname|e}} {{item.lastname|e}}'
+    title_format: [ firstname, lastname ]
+    recordsperpage: 10
+    icon_many: "fa:users"
+    icon_one: "fa:users"
+
+
+sermons:
+    name: Sermons
+    singular_name: Sermon
+    fields:
+        title:
+            type: text
+            class: large
+            group: content
+            required: true
+        date:
+            type: datetime
+            required: true
+        preacher:
+            type: text
+            required: true
+        series:
+            type: text
+        file:
+            type: file
+            required: true
+            extensions: [ mp3 ]
+        verse:
+            type: text
+        notes:
+            type: html
+            height: 300px
+        presentation:
+            type: file
+        slug:
+            type: slug
+            uses: title
+    relations:
+        pages:
+          multiple: false
+          order: date
+          label: Select a sermon
+    taxonomy: [ series, tags ]
+    record_template: entry.twig
+    listing_template: listing.twig
+    listing_records: 10
+    default_status: publish
+    sort: -date
+    recordsperpage: 10
+    icon_many: "fa:headphones"
+    icon_one: "fa:volume-up"
+
+
+news:
+    name: News Items
+    singular_name: News Item
+    singular_slug: news
+    fields:
+        headline:
+            type: text
+            class: large
+            group: content
+        teaser:
+            type: textarea
+            height: 55px
+            pattern: "^.{1,160}$"
+            postfix: "<p><em>Maximum 160 characters</em></p>"
+        body:
+            type: html
+            height: 600px
+        image:
+            type: image
+            group: media
+            attrib: alt
+            postfix: "<div><p>User the 'alt' textbox (above) to describe the image to a blind user:<br>e.g. <em>A group of young children stood around a table in a church hall holding brightly coloured playdogh and smiling to the camera</em></p></div>"
+        gallery:
+            type: imagelist
+            extensions: [ gif, jpg, png ]
+        video:
+            type: video
+        slug:
+            type: slug
+            uses: headline
+    relations:
+        pages:
+          multiple: false
+          order: title
+          label: Select a page
+    taxonomy: [ categories, tags ]
+    record_template: article.twig
+    listing_template: listing.twig
+    listing_records: 10
+    default_status: publish
+    sort: -datepublish
+    recordsperpage: 10
+    icon_many: "fa:newspaper-o"
+    icon_one: "fa:newspaper-o"
+
+
+events:
+    name: Events
+    singular_name: Event
+    fields:
+        title:
+            type: text
+            class: large
+            group: content
+        date:
+            type: datetime
+            required: true
+        until:
+            type: datetime
+            required: true
+            postfix: "<p>Please select a building in the <strong>Relationships</strong> tab</p>"
+        teaser:
+            type: textarea
+            height: 55px
+            pattern: "^.{1,160}$"
+        body:
+            type: html
+            height: 300px
+            required: true
+        image:
+            type: image
+            group: media
+        video:
+            type: video
+        slug:
+            type: slug
+            uses: title
+    relations:
+        buildings:
+          multiple: false
+          order: title
+          label: Select an building
+    taxonomy: [ categories, tags ]
+    record_template: event.twig
+    listing_template: listing.twig
+    listing_records: 10
+    default_status: publish
+    sort: -date
+    recordsperpage: 10
+    icon_many: "fa:calendar"
+    icon_one: "fa:map-marker"
+
+
+activities:
+    name: Activities
+    singular_name: Activity
+    fields:
+        name:
+            type: text
+            class: large
+            group: content
+        meetings:
+            type: repeater
+            fields:
+                location:
+                    type: select
+                    values: buildings/name
+                day:
+                    type: select
+                    values:
+                        Sunday: "Sunday"
+                        Monday: "Monday"
+                        Tuesday: "Tuesday"
+                        Wednesday: "Wednesday"
+                        Thursday: "Thursday"
+                        Friday: "Friday"
+                        Saturday: "Saturday"
+                    multiple: false
+                    label: 'Day of week'
+                week:
+                    label: "Week(s) of the month"
+                    type: select
+                    values:
+                        Every: "Every week"
+                        1st: "1st week of month"
+                        2nd: "2nd week of month"
+                        3rd: "3rd week of month"
+                        4th: "4th week of month"
+                        5th: "5th week of month"
+                        'Every other': "Alternate weeks"
+                        'Last': "Last week of month"
+                    multiple: false
+                from:
+                    type: text
+                    label: 'Time from'
+                    variant: inline
+                    postfix: '<p>Please enter in 24 hour format: <strong>hh:mm</strong> - <em>i.e.</em> <strong>21:15</strong></p>'
+                until:
+                    type: text
+                    label: 'Time until'
+                    postfix: '<p>Please enter in 24 hour format: <strong>hh:mm</strong> - <em>i.e.</em> <strong>22:30</strong></p>'
+                    variant: inline
+        teaser:
+            type: textarea
+            height: 55px
+            pattern: "^.{1,160}$"
+        body:
+            type: html
+            height: 300px
+            required: true
+        display:
+            type: checkbox
+            default: false
+            label: 'Display on homepage'
+            postfix: "<p><em>If more than three events are selected, only the first three alphabetical events will be shown.</em></p>"
+        image:
+            type: image
+            attrib: alt
+            group: media
+        gallery:
+            type: imagelist
+            attrib: alt
+        video:
+            type: video
+        slug:
+            type: slug
+            uses: name
+    taxonomy: [ categories, tags ]
+    record_template: group.twig
+    listing_template: groups.twig
+    listing_records: 10
+    default_status: publish
+    sort: name
+    recordsperpage: 10
+    icon_many: "fa:calendar"
+    icon_one: "fa:map-marker"
+
+
+# The 'Blocks' contenttype is a so-called 'resource contenttype'. This means
+# that it can be used to manage smaller pieces of content, like the 'about us'
+# text, an 'our address' in the footer, or similar short blurbs of text.
+# For more info, see: https://docs.bolt.cm/howto/resource-contenttype
+
+blocks:
+    name: Blocks
+    singular_name: Block
+    fields:
+        title:
+            type: text
+            class: large
+            group: "Block"
+        slug:
+            type: slug
+            uses: [ title ]
+        content:
+            type: html
+            height: 150px
+        contentlink:
+            type: text
+            label: Link
+            placeholder: 'contenttype/slug or http://example.org/'
+            postfix: "Use this to add a link for this Block. This could either be an 'internal' link like <tt>page/about</tt>, if you use a contenttype/slug combination. Otherwise use a proper URL, like `http://example.org`."
+        image:
+            type: image
+            attrib: title
+            extensions: [ gif, jpg, png ]
+    show_on_dashboard: false
+    viewless: true
+    default_status: publish
+    searchable: false
+    icon_many: "fa:cubes"
+    icon_one: "fa:cube"
+
+# Possible field types:
+#
+# text - varchar(256) - input type text.
+# integer - integer - Input field for integer numbers.
+# float - double - Input field for floating numbers, stored as 'Double'.
+# geolocation - text (65kb) - Input field for geolocation. Enter an address, and the location is geocoded to latitude/longitude coordinates
+# imagelist - text (65kb) - Input type for imagelists. Add multiple images with a description. Useful for image sliders, galleries, etcetera.
+# image - varchar(256) - image select/upload widget, stored as filename.
+# file - varchar(256) - file select/upload widget, stored as filename.
+# filelist - text (65kb) - Input type for a list of files. Including a description.
+# video - varchar(256) - Video embed widget, stored as filename.
+# html - text (65kb) - wysiwyg element.
+# textarea - varchar(32768) - Simple, plain < textarea > field.
+# markdown - varchar(32768) - Simple, plain < textarea > field, which is parsed as Markdown text.
+# datetime - datetime - date and time selector widget.
+# date - datetime - date selector widget.
+# select - varchar(256) - select with predefined values
+# templateselect - varchar(256) - select with template filenames
+# checkbox - integer - checkbox-field which is 1 (checked) or 0 (unchecked)
+
+# Using YAML repeated nodes
+#
+# YAML allows the defining of "repeated nodes". These allow you to define a 'node'
+# with a 'key: &name' and referenced later with '<<: *name'
+#
+# Bolt allows you to define this with the special entry of '__nodes:' that itself
+# won't create a Contenttype, but will allow you to use it in actual contenttypes
+# to prevent repeating yourself.
+#
+# To achieve this, first create a key '__nodes:'
+#__nodes:
+#    field_defaults: &field_defaults
+#        title:
+#            type: text
+#            class: large
+#            group: main
+#        slug:
+#            type: slug
+#            uses: title
+#    template_defaults: &template_defaults
+#        template:
+#            type: templateselect
+#            filter: '*.twig'
+#            group: meta
+#
+# Then, as an example, you could create a Contenttype with default fields, with
+# an additional 'image' field.
+#
+#contenttype_abc:
+#    name: Contenttype Abc
+#    fields:
+#        <<: *field_defaults
+#        image:
+#            type: image
+#            attrib: title
+#            extensions: [ gif, jpg, png ]
+#        <<: *template_defaults
+#    taxonomy: [ chapters ]
+#    recordsperpage: 10
+#
+# Alternatively, or additionally, you then can then create a Contenttype with
+# default fields, and a 'select' field, and a different 'templateselect' option.
+#
+#contenttype_xyz:
+#    name: Contenttype Xyz
+#    fields:
+#        <<: *field_defaults
+#        selectfield:
+#            type: select
+#            values: [ none, foo, bar ]
+#        template:
+#            type: templateselect
+#            filter: '*_xyz.twig'
+#    taxonomy: [ tags ]
+#    recordsperpage: 20

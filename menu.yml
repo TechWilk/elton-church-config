@@ -1,0 +1,44 @@
+# This file defines the menus on the website. See the documentation for
+# details: https://docs.bolt.cm/content/menus
+
+# ----------
+# IMPORTANT: THIS MENU IS NOT BEING USED IN THE DEFAULT HEADER
+# THE MENU IS INSTEAD BEING AUTO-GENERATED FROM PAGES AND THEIR GROUPING
+#----------
+
+main:
+    - label: Home
+      title: This is the first menu item.
+      path: homepage
+    - label: About
+      path: about
+      submenu:
+          - label: Sub 1
+            path: entry/2
+          - label: Sub 2
+            class: menu-item-class
+            path: entry/3
+          - label: Sub 3
+            path: entry/4
+          - label: Sub 4
+            class: sub-class
+            path: page/3
+    - label: What's on
+      path: whats-on
+      submenu:
+          - label: Sub 1
+            path: entry/2
+          - label: Sub 2
+            class: menu-item-class
+            path: entry/3
+          - label: Sub 3
+            path: entry/4
+          - label: Sub 4
+            class: sub-class
+            path: page/3
+    - label: News
+      path: news/
+    - label: Contact
+      path: contact
+    - label: Resources
+      path: resources
