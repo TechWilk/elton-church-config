@@ -308,7 +308,7 @@ wysiwyg:
 # requires that it be loaded with an API key on new domains. You can generate
 # a key at https://console.developers.google.com and enter it here to make sure
 # that the geolocation field work.
-google_api_key: AIzaSyAIKYsOAlQSHgwvpArfPx_nS1Ac6bQFE_U
+google_api_key: api_key_here
 
 # Global option to enable/disable the live editor
 liveeditor: false
